@@ -1,12 +1,15 @@
 import os
 
 from flask import Flask
+from flask import request
+from flask_cors import CORS
 from flask import jsonify
 
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+    CORS(app)
     app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
@@ -31,5 +34,14 @@ def create_app(test_config=None):
         response = jsonify({'message': 'Hello World!'})
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
+    
+    @app.route('/get-message', methods=['POST'])
+    def get_message():
+        if request.method == 'POST':
+            number = request.form['messageID']
+            if number == '1':
+                response = jsonify({'message': 'This is message 1'})
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
 
     return app
